@@ -9,7 +9,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.testapp.utils.customview.HorizontalProgressBar
 
-abstract class BaseActivity : AppCompatActivity() {
+open class BaseActivity : AppCompatActivity() {
 
     protected var horizontalProgressBar: HorizontalProgressBar? = null
 

@@ -7,5 +7,6 @@
     <color name="colorLightBlack">#666</color>
     <color name="colorWhite">#fff</color>
     <color name="colorLigtGray">#eee</color>
+    <color name="transparent">#00FFFFFF</color>
 
 </resources>
