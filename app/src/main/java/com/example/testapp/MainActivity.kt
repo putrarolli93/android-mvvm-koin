@@ -4,40 +4,68 @@ import android.os.Bundle
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.testapp.network.Status
+import com.example.testapp.databinding.ActivityMainBinding
 import com.example.testapp.ui.home.ProvinsiListAdapter
 import com.example.testapp.utils.base.BaseActivity
 import com.example.testapp.viewmodel.ProvinsiViewModel
-import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity() {
+/*
+Created By Putra Rolli
+ */
+
+class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
 
     private val provinsiViewModel: ProvinsiViewModel by viewModel()
     private lateinit var adapter: ProvinsiListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        setUpAdapter()
-        provinsiViewModel.getProvinsi()
-        getProvinsiRxLiveData()
-
     }
 
-    private fun getProvinsiRxLiveData() {
+    override fun initView(savedInstanceState: Bundle?) {
+        super.initView(savedInstanceState)
+        setUpAdapter()
+    }
+
+    override fun initData() {
+        super.initData()
+    }
+
+    override fun loadingData() {
+        super.loadingData()
+        provinsiViewModel.getProvinsi()
+    }
+
+    override fun observeData() {
+        super.observeData()
+        observeProvinsiRxLiveData()
+    }
+
+    override fun initEvent() {
+        super.initEvent()
+        binding.swiperefresh.setOnRefreshListener {
+            provinsiViewModel.getProvinsi()
+        }
+    }
+
+    private fun observeProvinsiRxLiveData() {
         provinsiViewModel.provinsiLiveData.observe(this, Observer {
-            when (it.status) {
-                Status.SUCCESS -> {
-                    goneHorizonTopProgressBar()
-                    it.data?.provinsi?.let { data ->
+            parseObserveData(it,
+                resultSuccess = {
+                    it?.provinsi?.let { data ->
                         adapter.updateList(data)
                     }
-                }
-                Status.ERROR_500 -> {
-                    goneHorizonTopProgressBar()
-                }
-            }
+                    binding.swiperefresh.isRefreshing = false
+                },
+                resultEmpty = {
+                    binding.swiperefresh.isRefreshing = false
+                    //show page empty data
+                },
+                resultError = {
+                    binding.swiperefresh.isRefreshing = false
+                    //show page server error or anything
+                })
         })
     }
 
@@ -45,9 +73,16 @@ class MainActivity : BaseActivity() {
         adapter = ProvinsiListAdapter()
         val layoutManager =
             LinearLayoutManager(this@MainActivity, LinearLayoutManager.VERTICAL, false)
-        rvTopStory.layoutManager = layoutManager
-        rvTopStory.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
-        rvTopStory.adapter = adapter
+        binding.apply {
+            rvTopStory.layoutManager = layoutManager
+            rvTopStory.addItemDecoration(
+                DividerItemDecoration(
+                    this@MainActivity,
+                    layoutManager.orientation
+                )
+            )
+            rvTopStory.adapter = adapter
+        }
     }
 
 }

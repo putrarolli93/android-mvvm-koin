@@ -5,5 +5,6 @@ enum class Status {
     ERROR,
     LOADING,
     NETWORK_FAILED,
-    ERROR_500
+    ERROR_500,
+    EMPTY_DATA
 }

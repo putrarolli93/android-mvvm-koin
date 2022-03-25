@@ -4,7 +4,7 @@ import android.os.Bundle
 import com.example.testapp.network.Resource
 import com.example.testapp.network.Status
 
-interface BaseActivityView {
+interface BaseFragmentView {
 
     fun initData()
 
@@ -31,9 +31,8 @@ interface BaseActivityView {
         resultLoading: (T?) -> Unit = { showLoadingDialog() },
         resultSuccess: (T) -> Unit = { _: T -> },
         resultNetworkFailed: (Throwable?) -> Unit = { onInternetError() },
-        resultError: (Throwable?) -> Unit = { onError(it) },
-        resultEmpty: (T) -> Unit = { _: T -> }
-        ) {
+        resultError: (Throwable?) -> Unit = { onError(it) }
+    ) {
         when (resource.status) {
             Status.LOADING -> {
                 resultLoading(resource.data)
@@ -41,10 +40,6 @@ interface BaseActivityView {
             Status.SUCCESS -> {
                 dismissLoadingDialog()
                 resource.data?.let { resultSuccess(it) }
-            }
-            Status.EMPTY_DATA -> {
-                dismissLoadingDialog()
-                resource.data?.let { resultEmpty(it) }
             }
             Status.ERROR -> {
                 dismissLoadingDialog()
@@ -61,11 +56,11 @@ interface BaseActivityView {
      * Group function show and gone UI view progress bar
      */
 
-    fun showLoadingDialog(){}
+    fun showLoadingDialog()
 
-    fun hideLoadingDialog(){}
+    fun hideLoadingDialog()
 
-    fun dismissLoadingDialog(){}
+    fun dismissLoadingDialog()
 
     fun showLoadingDialogAbsolute(){}
 
